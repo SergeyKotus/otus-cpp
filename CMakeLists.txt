@@ -5,7 +5,7 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(ip_filter VERSION ${PROJECT_VESRION})
 
-option(WITH_BOOST_TEST "Whether to build Boost test" OFF)
+option(WITH_BOOST_TEST "Whether to build Boost test" ON)
 
 #configure_file(version.h.in version.h)
 
@@ -26,7 +26,12 @@ target_link_libraries(ip_filter PRIVATE
 )
 ]]
 
+#message("cmake: - before boost test including")
+message("cmake: - WITH_BOOST_TEST = " ${WITH_BOOST_TEST})
+set(Boost_DEBUG ON)
 if(WITH_BOOST_TEST)    
+    #message("cmake: - with boost test")
+    #cmake_policy(SET CMP0074 NEW)
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
     configure_file(version.h.in version.h)
     add_library(version lib.cpp)
@@ -41,10 +46,16 @@ if(WITH_BOOST_TEST)
         PRIVATE "${CMAKE_BINARY_DIR}"
     )
 
+#[[
     set_target_properties(test_version PROPERTIES
         COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
         INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
     )
+]]
+
+set_target_properties(test_version PROPERTIES
+    INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
+)
 
     target_link_libraries(test_version
         ${Boost_LIBRARIES}
@@ -56,10 +67,11 @@ if (MSVC)
     target_compile_options(ip_filter PRIVATE
         /W4
     )
-    target_compile_options(version PRIVATE
-        /W4
-    )
+    
     if(WITH_BOOST_TEST)
+        target_compile_options(version PRIVATE
+            /W4
+        )
         target_compile_options(test_version PRIVATE
             /W4
         )
@@ -68,10 +80,11 @@ else ()
     target_compile_options(ip_filter PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
-    target_compile_options(version PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
+    
     if(WITH_BOOST_TEST)
+        target_compile_options(version PRIVATE
+        -Wall -Wextra -pedantic -Werror
+        )
         target_compile_options(test_version PRIVATE
             -Wall -Wextra -pedantic -Werror
         )
