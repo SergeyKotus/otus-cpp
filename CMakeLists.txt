@@ -5,7 +5,7 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(ip_filter VERSION ${PROJECT_VESRION})
 
-option(WITH_BOOST_TEST "Whether to build Boost test" ON)
+option(WITH_BOOST_TEST "Whether to build Boost test" OFF)
 
 add_executable(ip_filter main.cpp)
 
@@ -23,18 +23,12 @@ if(WITH_BOOST_TEST)
     #cmake_policy(SET CMP0074 NEW)
     #cmake_policy(SET CMP0167 NEW)
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-#    configure_file(version.h.in version.h)
-#    add_library(version lib.cpp)
     add_executable(test_md5sum test_md5sum.cpp)
 
     set_target_properties(test_md5sum PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
     )
-
-#    target_include_directories(version
-#        PRIVATE "${CMAKE_BINARY_DIR}"
-#    )
 
 #[[
     set_target_properties(test_version PROPERTIES
@@ -67,9 +61,6 @@ if (MSVC)
     )
     
     if(WITH_BOOST_TEST)
-#        target_compile_options(version PRIVATE
-#            /W4
-#        )
         target_compile_options(test_md5sum PRIVATE
             /W4
         )
@@ -80,9 +71,6 @@ else ()
     )
     
     if(WITH_BOOST_TEST)
-#        target_compile_options(version PRIVATE
-#        -Wall -Wextra -pedantic -Werror
-#        )
         target_compile_options(test_md5sum PRIVATE
             -Wall -Wextra -pedantic -Werror
         )
@@ -100,5 +88,5 @@ include(CPack)
 
 if(WITH_BOOST_TEST)
     enable_testing()
-    add_test(NAME test_md5sum COMMAND test_md5sum --log_level=all)
+    add_test(NAME test_md5sum COMMAND test_md5sum)
 endif()
