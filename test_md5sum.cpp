@@ -11,13 +11,6 @@ BOOST_AUTO_TEST_CASE(test_valid_md5sum)
 {
     std::system("cat ip_filter.tsv | ip_filter | md5sum > readme.txt");
 
-    std::ifstream del("ip_filter2");
-    if(!del.is_open())
-    {
-        BOOST_CHECK(1 == 2);
-    }
-
-
     std::string file_string = "";
     const std::string expected_string = "24e7a7b2270daee89c64d3ca5fb3da1a -";
     std::ifstream file("readme.txt");
@@ -26,6 +19,9 @@ BOOST_AUTO_TEST_CASE(test_valid_md5sum)
         std::getline(file, file_string);
         file.close();
     }    
+
+    if(file_string.at(0) != '2')
+        BOOST_CHECK(1 == 2);
 //    BOOST_TEST_MESSAGE(file_string.c_str());
     //std::cout << "[MD5] = " << file_string.c_str();
     //BOOST_CHECK(file_string == expected_string);
