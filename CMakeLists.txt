@@ -45,14 +45,14 @@ if(WITH_BOOST_TEST)
         ${Boost_LIBRARIES}        
     )
 
-    add_custom_command(
-        TARGET test_md5sum
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_CURRENT_SOURCE_DIR}/ip_filter.tsv"
-            "$<TARGET_FILE_DIR:test_md5sum>/ip_filter.tsv"
-    COMMENT "Deploying test data file..."
-)
+#    add_custom_command(
+#        TARGET test_md5sum
+#        POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy
+#            "${CMAKE_CURRENT_SOURCE_DIR}/ip_filter.tsv"
+#            "$<TARGET_FILE_DIR:test_md5sum>/ip_filter.tsv"
+#    COMMENT "Deploying test data file..."
+#   )
 endif()
 
 if (MSVC)
