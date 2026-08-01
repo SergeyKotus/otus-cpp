@@ -100,5 +100,5 @@ include(CPack)
 
 if(WITH_BOOST_TEST)
     enable_testing()
-    add_test(NAME test_md5sum COMMAND test_md5sum)
+    add_test(NAME test_md5sum COMMAND test_md5sum --log_level=all)
 endif()
