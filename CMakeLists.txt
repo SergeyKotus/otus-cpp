@@ -5,7 +5,7 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(ip_filter VERSION ${PROJECT_VESRION})
 
-option(WITH_BOOST_TEST "Whether to build Boost test" OFF)
+option(WITH_BOOST_TEST "Whether to build Boost test" ON)
 
 add_executable(ip_filter main.cpp)
 
