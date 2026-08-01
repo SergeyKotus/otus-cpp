@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_CASE(test_valid_md5sum)
 {
     std::system("cat ip_filter.tsv | ip_filter | md5sum > readme.txt");
 
-    std::ifstream del("ip_filter");
+    std::ifstream del("ip_filter2");
     if(!del.is_open())
     {
         BOOST_CHECK(1 == 2);
