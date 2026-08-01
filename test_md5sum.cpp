@@ -20,11 +20,10 @@ BOOST_AUTO_TEST_CASE(test_valid_md5sum)
         file.close();
     }    
 
-    if(file_string.at(0) != '2')
-        BOOST_CHECK(1 == 2);
+
 //    BOOST_TEST_MESSAGE(file_string.c_str());
     //std::cout << "[MD5] = " << file_string.c_str();
-    //BOOST_CHECK(file_string == expected_string);
+    BOOST_CHECK(file_string == expected_string);
     //BOOST_CHECK(1 == 1);
     //BOOST_CHECK(std::strcmp(std::ifstream("readme.txt").rdbuf(), "24e7a7b2270daee89c64d3ca5fb3da1a -") == 0);
     std::remove("readme.txt");
