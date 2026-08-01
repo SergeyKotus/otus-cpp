@@ -63,7 +63,7 @@ void showIpPool(std::vector<std::vector<std::string>>::const_iterator first_it,
     }
 }
 
-int main(int argc, char const *argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
 {
     try
     {
