@@ -3,7 +3,7 @@ name: 'C++ CI'
 on:
   push:
     branches:
-      - ip_filter
+      - custom_allocator
       - feature/github_actions
 
 jobs:
@@ -14,7 +14,11 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
-      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
+      - name: Get commit count
+      run: |
+      COMMIT_COUNT=$(git rev-list --count HEAD)
+      echo "COMMIT_COUNT=$COMMIT_COUNT" >> $GITHUB_ENV
+      - run: cmake . -DPATCH_VERSION=${{ env.COMMIT_COUNT }} -DWITH_BOOST_TEST=ON
       - run: cmake --build .
       - run: cmake --build . --target test
       - run: cmake --build . --target package
@@ -35,6 +39,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ip_filter-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: ip_filter-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./custom_allocator-0.0.${{ env.COMMIT_COUNT }}-Linux.deb
+          asset_name: custom_allocator-0.0.${{ env.COMMIT_COUNT }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
