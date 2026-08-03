@@ -6,6 +6,7 @@
 #include <array>
 #include <algorithm>
 #include <sstream>
+#include <cstdint>
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
