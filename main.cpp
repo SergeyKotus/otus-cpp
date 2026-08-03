@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 #include <algorithm>
+#include <sstream>
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
@@ -11,72 +13,71 @@
 // ("11.", '.') -> ["11", ""]
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
-std::vector<std::string> split(const std::string &str, char d)
+//std::vector<std::string> split(const std::string &str, char d)
+//{
+//    std::vector<std::string> r;
+
+//    std::string::size_type start = 0;
+//    std::string::size_type stop = str.find_first_of(d);
+//    while(stop != std::string::npos)
+//    {
+//        r.push_back(str.substr(start, stop - start));
+
+//        start = stop + 1;
+//        stop = str.find_first_of(d, start);
+//    }
+
+//    r.push_back(str.substr(start));
+
+//    return r;
+//}
+
+bool compareIP(const std::array<uint8_t, 4>& ip1, const std::array<uint8_t, 4>& ip2)
 {
-    std::vector<std::string> r;
-
-    std::string::size_type start = 0;
-    std::string::size_type stop = str.find_first_of(d);
-    while(stop != std::string::npos)
-    {
-        r.push_back(str.substr(start, stop - start));
-
-        start = stop + 1;
-        stop = str.find_first_of(d, start);
-    }
-
-    r.push_back(str.substr(start));
-
-    return r;
+    return ip1 > ip2;
+//    int i = 0;
+//    while(i < 3)
+//    {
+//        if(ip1[i] != ip2[i])
+//            break;
+//        i++;
+//    }
+//    return ip1[i] > ip2[i];
 }
 
-bool compareIP(const std::vector<std::string>& ip1, const std::vector<std::string>& ip2)
-{
-    int i = 0;
-    while(i < 3)
+void showIpPool(std::vector<std::array<uint8_t, 4>>::const_iterator first_it,
+                std::vector<std::array<uint8_t, 4>>::const_iterator last_it,
+                bool (*condition)(const std::array<uint8_t, 4>& ip) = nullptr)
+{    
+    for(auto it = first_it; it != last_it; ++it)
     {
-        if(ip1[i] != ip2[i])
-            break;
-        i++;
-    }
-    return stoi(ip1[i]) > stoi(ip2[i]);
-}
-
-void showIpPool(std::vector<std::vector<std::string>>::const_iterator first_it,
-                std::vector<std::vector<std::string>>::const_iterator last_it,
-                bool (*condition)(const std::vector<std::string>& ip) = nullptr)
-{
-    for(auto ip_it = first_it; ip_it != last_it; ++ip_it)
-    {
-        if((condition == nullptr) || condition(*ip_it))
-        {
-            for(auto ip_part_it = ip_it->cbegin(); ip_part_it != ip_it->cend(); ++ip_part_it)
-            {
-                if(ip_part_it != ip_it->cbegin())
-                {
-                    std::cout << ".";
-                }
-                std::cout << *ip_part_it;
-            }
-            std::cout << std::endl;
-        }
+        if((condition == nullptr) || condition(*it))
+            std::cout << static_cast<int>((*it)[0]) << "." << static_cast<int>((*it)[1]) << "."
+                      << static_cast<int>((*it)[2]) << "." << static_cast<int>((*it)[3]) << std::endl;
     }
 }
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
 {
     try
-    {
-        std::vector<std::vector<std::string> > ip_pool;
+    {        
+        std::vector<std::array<uint8_t, 4>> ip_pool;
 
         for(std::string line; std::getline(std::cin, line);)
         {
-            std::vector<std::string> v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0), '.'));
+            int int_ip[4];
+            char dot;
+            std::stringstream ss(line);
+            ss >> int_ip[0] >> dot >> int_ip[1] >> dot >> int_ip[2] >> dot >> int_ip[3];
+            ip_pool.push_back({static_cast<std::uint8_t>(int_ip[0]),
+                               static_cast<std::uint8_t>(int_ip[1]),
+                               static_cast<std::uint8_t>(int_ip[2]),
+                               static_cast<std::uint8_t>(int_ip[3])});
         }
 
         // TODO reverse lexicographically sort
         std::sort(ip_pool.begin(), ip_pool.end(), compareIP);
+        //std::sort(ip_pool.begin(), ip_pool.end());
         showIpPool(ip_pool.cbegin(), ip_pool.cend());
         // 222.173.235.246
         // 222.130.177.64
@@ -88,9 +89,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
 
         // TODO filter by first byte and output
         // ip = filter(1)
-        auto filter_1 = [](const auto& ip){return ip[0] == "1";};
-        auto first_it = std::find_if(ip_pool.cbegin(), ip_pool.cend(), filter_1);
-        auto last_it = std::find_if_not(first_it, ip_pool.cend(), filter_1);
+
+//        auto filter_1 = [](const auto& ip){return ip[0] == 1;};
+//        auto first_it = std::find_if(ip_pool.cbegin(), ip_pool.cend(), filter_1);
+//        auto last_it = std::find_if_not(first_it, ip_pool.cend(), filter_1);
+
+        std::array<uint8_t, 4> lb_1 = {1, 255, 255, 255};
+        auto first_it = std::lower_bound(ip_pool.cbegin(), ip_pool.cend(), lb_1, compareIP);
+        std::array<uint8_t, 4> ub_1 = {1, 0, 0, 0};
+        auto last_it = std::upper_bound(first_it, ip_pool.cend(), ub_1, compareIP);
         showIpPool(first_it, last_it);
         // 1.231.69.33
         // 1.87.203.225
@@ -100,9 +107,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
 
         // TODO filter by first and second bytes and output
         // ip = filter(46, 70)
-        auto filter_46_70 = [](const auto& ip){return ip[0] == "46" && ip[1] == "70";};
-        first_it = std::find_if(ip_pool.cbegin(), ip_pool.cend(), filter_46_70);
-        last_it = std::find_if_not(first_it, ip_pool.cend(), filter_46_70);
+
+//        auto filter_46_70 = [](const auto& ip){return ip[0] == 46 && ip[1] == 70;};
+//        first_it = std::find_if(ip_pool.cbegin(), ip_pool.cend(), filter_46_70);
+//        last_it = std::find_if_not(first_it, ip_pool.cend(), filter_46_70);
+
+        std::array<uint8_t, 4>lb_46_70 = {46, 70, 255, 255};
+        first_it = std::lower_bound(ip_pool.cbegin(), ip_pool.cend(), lb_46_70, compareIP);
+        std::array<uint8_t, 4> ub_46_70 = {46, 70, 0, 0};
+        last_it = std::upper_bound(first_it, ip_pool.cend(), ub_46_70, compareIP);
         showIpPool(first_it, last_it);
         // 46.70.225.39
         // 46.70.147.26
@@ -112,7 +125,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
         // TODO filter by any byte and output
         // ip = filter_any(46)
         showIpPool(ip_pool.cbegin(), ip_pool.cend(),
-                   [](const auto& ip){return std::find(ip.cbegin(), ip.cend(), "46") != ip.cend();});
+                   [](const auto& ip){return std::find(ip.cbegin(), ip.cend(), 46) != ip.cend();});
         // 186.204.34.46
         // 186.46.222.194
         // 185.46.87.231
