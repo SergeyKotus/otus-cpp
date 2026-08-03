@@ -15,9 +15,9 @@ jobs:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
       - name: Get commit count
-      run: |
-      COMMIT_COUNT=$(git rev-list --count HEAD)
-      echo "COMMIT_COUNT=$COMMIT_COUNT" >> $GITHUB_ENV
+      - run: |
+        COMMIT_COUNT=$(git rev-list --count HEAD)
+        echo "COMMIT_COUNT=$COMMIT_COUNT" >> $GITHUB_ENV
       - run: cmake . -DPATCH_VERSION=${{ env.COMMIT_COUNT }} -DWITH_BOOST_TEST=ON
       - run: cmake --build .
       - run: cmake --build . --target test
