@@ -33,19 +33,6 @@
 //    return r;
 //}
 
-bool compareIP(const std::array<uint8_t, 4>& ip1, const std::array<uint8_t, 4>& ip2)
-{
-    return ip1 > ip2;
-//    int i = 0;
-//    while(i < 3)
-//    {
-//        if(ip1[i] != ip2[i])
-//            break;
-//        i++;
-//    }
-//    return ip1[i] > ip2[i];
-}
-
 void showIpPool(std::vector<std::array<uint8_t, 4>>::const_iterator first_it,
                 std::vector<std::array<uint8_t, 4>>::const_iterator last_it,
                 bool (*condition)(const std::array<uint8_t, 4>& ip) = nullptr)
@@ -76,9 +63,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
                                static_cast<std::uint8_t>(int_ip[3])});
         }
 
-        // TODO reverse lexicographically sort
+        // TODO reverse lexicographically sort        
+        auto compareIP = [](const auto& ip1, const auto& ip2){return ip1 > ip2;};
         std::sort(ip_pool.begin(), ip_pool.end(), compareIP);
-        //std::sort(ip_pool.begin(), ip_pool.end());
         showIpPool(ip_pool.cbegin(), ip_pool.cend());
         // 222.173.235.246
         // 222.130.177.64
@@ -90,14 +77,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
 
         // TODO filter by first byte and output
         // ip = filter(1)
-
 //        auto filter_1 = [](const auto& ip){return ip[0] == 1;};
 //        auto first_it = std::find_if(ip_pool.cbegin(), ip_pool.cend(), filter_1);
-//        auto last_it = std::find_if_not(first_it, ip_pool.cend(), filter_1);
-
-        std::array<uint8_t, 4> lb_1 = {1, 255, 255, 255};
-        auto first_it = std::lower_bound(ip_pool.cbegin(), ip_pool.cend(), lb_1, compareIP);
-        std::array<uint8_t, 4> ub_1 = {1, 0, 0, 0};
+//        auto last_it = std::find_if_not(first_it, ip_pool.cend(), filter_1);        
+        decltype(ip_pool)::value_type lb_1 = {1, 255, 255, 255};
+        auto first_it = std::lower_bound(ip_pool.cbegin(), ip_pool.cend(), lb_1, compareIP);        
+        decltype(ip_pool)::value_type ub_1 = {1, 0, 0, 0};
         auto last_it = std::upper_bound(first_it, ip_pool.cend(), ub_1, compareIP);
         showIpPool(first_it, last_it);
         // 1.231.69.33
@@ -108,14 +93,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[])
 
         // TODO filter by first and second bytes and output
         // ip = filter(46, 70)
-
 //        auto filter_46_70 = [](const auto& ip){return ip[0] == 46 && ip[1] == 70;};
 //        first_it = std::find_if(ip_pool.cbegin(), ip_pool.cend(), filter_46_70);
 //        last_it = std::find_if_not(first_it, ip_pool.cend(), filter_46_70);
-
-        std::array<uint8_t, 4>lb_46_70 = {46, 70, 255, 255};
+        decltype(ip_pool)::value_type lb_46_70 = {46, 70, 255, 255};
         first_it = std::lower_bound(ip_pool.cbegin(), ip_pool.cend(), lb_46_70, compareIP);
-        std::array<uint8_t, 4> ub_46_70 = {46, 70, 0, 0};
+        decltype(ip_pool)::value_type ub_46_70 = {46, 70, 0, 0};
         last_it = std::upper_bound(first_it, ip_pool.cend(), ub_46_70, compareIP);
         showIpPool(first_it, last_it);
         // 46.70.225.39
