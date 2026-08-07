@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <map>
 #include "MyList.h"
 
@@ -32,10 +32,14 @@ public:
 
     ~MyAllocator()
     {
-        delete m_buff;
+        delete[] m_buff;
     }
 
-    MyAllocator(const MyAllocator& other) = delete;
+    //MyAllocator(const MyAllocator& other) = delete;
+    MyAllocator(const MyAllocator&)
+    {
+        m_buff = new T[MAX_SIZE];
+    }
 
     MyAllocator(MyAllocator&& other) noexcept
     {
@@ -45,9 +49,11 @@ public:
 
     MyAllocator& operator=(const MyAllocator& other) = delete;
 
+
+
     MyAllocator& operator=(MyAllocator&& other) noexcept
     {
-        if(this != other)
+        if(this != &other)
         {
             std::swap(m_size, other.m_size);
             std::swap(m_buff, other.m_buff);
@@ -77,6 +83,16 @@ public:
     {
         ptr->~T();
     }
+
+    bool operator==(const MyAllocator&) const noexcept
+    {std::cout << "operator ==  return true" << std::endl;
+        return true;
+    }
+
+    bool operator!=(const MyAllocator&) const noexcept
+    {std::cout << "operator !=  return false" << std::endl;
+        return false;
+    }
 };
 
 
@@ -88,7 +104,7 @@ int main()
         stdMap[i] = factorial(i);
 
     std::cout << "std::map" << std::endl;
-    for(const auto value : stdMap)
+    for(const auto& value : stdMap)
         std::cout << value.first << " " << value.second << std::endl;
     std::cout << std::endl;
 
@@ -97,7 +113,7 @@ int main()
         stdMapA[i] = factorial(i);
 
     std::cout << "std::map with MyAllocator" << std::endl;
-    for(const auto value : stdMapA)
+    for(const auto& value : stdMapA)
         std::cout << value.first << " " << value.second << std::endl;
     std::cout << std::endl;
 
@@ -106,17 +122,18 @@ int main()
         myList.push_back(i);
 
     std::cout << "MyList" << std::endl;
-    for(const auto value : myList)
+    for(const auto& value : myList)
         std::cout << value << std::endl;
     std::cout << std::endl;
 
-    MyList<int, MyAllocator<int, 11>> myListA;//11 - из-за хвостовой ноды в списке
+    MyList<int, MyAllocator<int, 11>> myListA;//11 - из-за хвостовой ноды в моем списке с курса Basic
     for(int i = 0; i < 10; ++i)
         myListA.push_back(i);
 
     std::cout << "MyList with MyAllocator" << std::endl;
-    for(const auto value : myListA)
+    for(const auto& value : myListA)
         std::cout << value << std::endl;
     std::cout << std::endl;
+    
     return 0;
 }
