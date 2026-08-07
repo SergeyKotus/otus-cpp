@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           submodules: true
 
@@ -35,8 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v0.0.${{ env.COMMIT_COUNT }}
-          release_name: Release v0.0.${{ env.COMMIT_COUNT }}
+          tag_name: ${{ env.COMMIT_COUNT }}
+          release_name: Release ${{ env.COMMIT_COUNT }}
           draft: false
           prerelease: false
 
