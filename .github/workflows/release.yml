@@ -15,16 +15,16 @@ jobs:
           submodules: true
 
       # Вычисляем количество коммитов в текущей ветке
-      - name: Get commit count in branch
-        id: get_commit_count
-        run: |
+      #- name: Get commit count in branch
+      #  id: get_commit_count
+      #  run: |
           # HEAD~ — это текущая ветка, считаем коммиты от первого коммита до текущего
-          COUNT=$(git rev-list --count HEAD)
-          echo "COMMIT_COUNT=$COUNT" >> $GITHUB_ENV
+      #    COUNT=$(git rev-list --count HEAD)
+      #    echo "COMMIT_COUNT=$COUNT" >> $GITHUB_ENV
 
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
 
-      - run: cmake . -DPATCH_VERSION=${{ env.COMMIT_COUNT }} -DWITH_BOOST_TEST=ON
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
       - run: cmake --build .
       #- run: cmake --build . --target test
       - run: cmake --build . --target package
@@ -35,8 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.COMMIT_COUNT }}
-          release_name: Release ${{ env.COMMIT_COUNT }}
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
           draft: false
           prerelease: false
 
@@ -47,6 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./custom_allocator-0.0.${{ env.COMMIT_COUNT }}-Linux.deb
-          asset_name: custom_allocator-0.0.${{ env.COMMIT_COUNT }}-Linux.deb
+          asset_path: ./custom_allocator-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: custom_allocator-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
