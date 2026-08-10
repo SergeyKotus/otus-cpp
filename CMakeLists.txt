@@ -7,7 +7,7 @@ project(ip_filter VERSION ${PROJECT_VESRION})
 
 option(WITH_BOOST_TEST "Whether to build Boost test" ON)
 
-add_executable(ip_filter main.cpp)
+add_executable(ip_filter main.cpp ip_pool_functions.cpp)
 
 set_target_properties(ip_filter PROPERTIES
     CXX_STANDARD 14
